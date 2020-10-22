@@ -1,0 +1,21 @@
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-anatomy.html
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-instance.html
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      # An Availability Zone (AZ) is one or more discrete data centers with
+      # redundant power, networking, and connectivity in an AWS Region.
+      # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html
+      # aws ec2 describe-availability-zones --region eu-north-1
+      AvailabilityZone: eu-north-1a
+      # The ID of the Amazon Machine Image (AMI).
+      # An AMI ID is required to launch an instance and must be specified here or in a launch template.
+      # Official Ubuntu AMIs: https://cloud-images.ubuntu.com/locator/ec2/
+      ImageId: ami-08d18dd6fa8bd7fe6
+      # https://aws.amazon.com/free/
+      # https://aws.amazon.com/ec2/pricing/on-demand/
+      InstanceType: t3.micro
+      # The name of the key pair that you have created here:
+      # https://console.aws.amazon.com/ec2/home#KeyPairs
+      KeyName: ThinkPad T495 Windows

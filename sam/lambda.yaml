@@ -1,0 +1,31 @@
+# Identifies the capabilities of the template (optional)
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
+AWSTemplateFormatVersion: '2010-09-09'
+# Specifies one or more macros that AWS CloudFormation uses to process your template (optional).
+# Let's inform CloudFormation that our template defines a serverless app.
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-aws-serverless.html
+Transform: AWS::Serverless-2016-10-31
+# A description of the function. (optional)
+Description: Simple hello world Lambda function
+# Specifies the stack resources and their properties (required)
+Resources:
+  # Arbitrary
+  HelloWorldFunction:
+    # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
+    Type: AWS::Serverless::Function
+    Properties:
+      # Either CodeUri or InlineCode is required.
+      # The Amazon S3 URI, local file path, or FunctionCode object of the function code.
+      CodeUri: lambda-code
+      # The function within your code that is called to begin execution. (required)
+      Handler: my_lambda.hello_world
+      # The identifier of the function's runtime. (required)
+      # https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
+      Runtime: python3.7
+      # The maximum time that the function can run before it is killed, in seconds. (optional)
+      Timeout: 10
+      # Specifies the events that trigger this function. (optional)
+      # Events consist of a type and a set of properties that depend on the type.
+      # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-eventsource.html
+      # Events:
