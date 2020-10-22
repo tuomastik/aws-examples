@@ -13,19 +13,19 @@ Simple example uses of different AWS services.
 
 1. Install [AWS Command Line Interface (CLI)](https://aws.amazon.com/cli/)
 
-2. Configure the CLI: `aws configure`
-    <br>
-    Add user for the CLI on https://console.aws.amazon.com/iam
-3. Create SSH key pair for the EC2 instance on https://console.aws.amazon.com/ec2/home#KeyPairs
+    * Configure the CLI: `aws configure`
+    * [Add user for the CLI](https://console.aws.amazon.com/iam)
 
-4. Create/update/delete the CloudFormation stack:
+2. [Create SSH key pair for the EC2 instance](https://console.aws.amazon.com/ec2/home#KeyPairs)
+
+3. Create/update/delete the CloudFormation stack:
    ```bash
    aws --region eu-north-1 cloudformation create-stack --stack-name ec2-only --template-body file://cloudformation/ec2.yaml
    aws --region eu-north-1 cloudformation update-stack --stack-name ec2-only --template-body file://cloudformation/ec2.yaml
    aws --region eu-north-1 cloudformation delete-stack --stack-name ec2-only
    ```
    
-5. Monitor the progress at https://console.aws.amazon.com/cloudformation
+4. [Monitor the stack creation progress](https://console.aws.amazon.com/cloudformation)
 
 
 ## [AWS Serverless Application Model (SAM)](https://aws.amazon.com/serverless/sam/)
