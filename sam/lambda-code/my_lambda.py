@@ -1,3 +1,4 @@
+import json
 from typing import Dict, Any
 
 import wikipedia
@@ -19,8 +20,23 @@ def hello_world(
         https://docs.aws.amazon.com/lambda/latest/dg/python-context.html
     :return: JSON serializable data
     """
-    wiki_search_term = event.get("searchTerm", "")
-    if not wiki_search_term:
-        return "Wikipedia search term was not provided"
+    body_str = event.get("body", "{}")
+    body_str = body_str if body_str else "{}"
+    body_obj = json.loads(body_str)
+    wiki_search_term = body_obj.get("searchTerm", "")
+    if not body_obj or not wiki_search_term:
+        # https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html
+        response = {
+            "statusCode": 400,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({"message": "Wikipedia search term was not provided"}),
+        }
     else:
-        return wikipedia.summary(wiki_search_term)
+        summary = wikipedia.summary(wiki_search_term)
+        response = {
+            "statusCode": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps(summary),
+        }
+    # https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-output-format
+    return response

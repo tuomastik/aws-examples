@@ -51,12 +51,23 @@ Simple example uses of different AWS services.
        --manifest sam/lambda-code/requirements.txt
    ```
 
-3. Invoke our Lambda function locally using Docker and [`sam local invoke`](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-invoke.html) command.
-   
+3. Run our serverless application locally for quick development and testing using Docker and [`sam local start-api`](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-start-api.html) command.
+
+   Note: SAM CLI [doesn't support schema validation](https://github.com/aws/aws-sam-cli/issues/364) like API Gateway does,
+   so we have to deploy the SAM stack to check whether the validation is working.
+
    ```bash
-   sam local invoke "HelloWorldFunction"
-   echo '{"searchTerm": "United States"}' | sam local invoke "HelloWorldFunction" --event -
-   sam local invoke --event sam/lambda-example-query.json
+   sam local start-api
+   ```
+   
+   Send a testing request to the API:
+
+   ```bash
+   curl \
+       --header "Content-Type: application/json" \
+       --request POST \
+       --data '{"searchTerm": "United States"}' \
+       http://localhost:3000
    ```
 
 4. Package the AWS SAM application using [`sam package`](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-package.html) command.
@@ -81,3 +92,8 @@ Simple example uses of different AWS services.
        --capabilities CAPABILITY_IAM \
        --region eu-north-1
    ```
+
+
+## Useful resources
+
+* [Difference in Lambda's event parameter when the Lambda is executed directly vs. through API Gateway](https://stackoverflow.com/a/48391462/5524090)

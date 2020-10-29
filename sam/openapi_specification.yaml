@@ -1,0 +1,87 @@
+openapi: 3.0.0
+
+info:
+  title: My Super Cool API
+  version: 0.0.1
+
+paths:
+  /:
+    post:
+      summary: Returns summary of the requested Wikipedia article
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                searchTerm:
+                  type: string
+                  minLength: 1
+              required:
+                - searchTerm
+      responses:
+        '200':
+          description: Wikipedia article summary
+          content:
+            application/json:
+              schema:
+                type: string
+
+      # Specify details of the backend integration
+      # https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-integration.html
+      # https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
+      x-amazon-apigateway-integration:
+        # For integration with AWS Lambda functions.
+        type: "aws_proxy"
+        httpMethod: "POST"
+        # The endpoint URI of the backend. For integrations of the aws type, this is an ARN value.
+        # The ARN should have the following format, given that we could use variables like we can in CloudFormation/Sam templates:
+        # arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${YourLambdaFunction.Arn}/invocations
+        # or a bit more specifically:
+        # arn:aws:apigateway:api-region:lambda:path/2015-03-31/functions/arn:aws:lambda:lambda-region:account-id:function:lambda-function-name/invocations
+        # Source: https://docs.aws.amazon.com/apigateway/latest/developerguide/integration-request-basic-setup.html
+
+        # Determining the Lambda ARN is a chicken-and-egg problem because we haven't deployed the function yet at this point.
+        # However, we can:
+        # 1) leave out the Lambda ARN from the uri,
+        # 2) deploy the stack,
+        # 3) get the deployed Lambda ARN from the AWS Management Console (shown on top of the Lambda page),
+        # 4) fill the Lambda ARN here in the uri field,
+        # 5) re-deploy the SAM stack.
+
+        # Resources discussing the aforementioned problem:
+        # https://stackoverflow.com/questions/54335872/openapi-and-lambda-integration-within-api-gateway
+        # https://stackoverflow.com/questions/62179893/aws-cdk-how-to-create-an-api-gateway-backed-by-lambda-from-openapi-spec
+        uri: "arn:aws:apigateway:eu-north-1:lambda:path/2015-03-31/functions/arn:aws:lambda:eu-north-1:971123877489:function:my-first-sam-stack-HelloWorldFunction-1PSOT3ZTZ2PTW/invocations"
+
+        responses:
+          default:
+            statusCode: 200
+
+# Configures Gateway Responses for an API. (optional)
+# Gateway Responses are responses returned by API Gateway, either directly or through the use of Lambda Authorizers.
+# https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-gateway-responses.html
+# This option got enabled only when it was defined here in the root-level of this YAML and not in the request-specific level (or indentation).
+x-amazon-apigateway-gateway-responses:
+  BAD_REQUEST_BODY:
+    statusCode: 400
+    responseTemplates:
+      # Let's return a more detailed error message in case of validation error.
+      # https://stackoverflow.com/a/48014686/5524090
+      application/json: '{"message": "$context.error.validationErrorString"}'
+      # The default is as follows:
+      # application/json: '{"message":$context.error.messageString}'
+      # which always returns {"message": "Invalid request body"} in case of validation error.
+
+# Configure API Gateway to perform basic validation of an API request before proceeding with the integration request.
+# https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-request-validation-set-up.html#api-gateway-request-validation-setup-importing-swagger
+# https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validators.html
+x-amazon-apigateway-request-validators:
+  # Validator name
+  all:
+    validateRequestBody: true
+    validateRequestParameters: true
+# Enable our request validator for all the endpoints of this API
+# https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-swagger-extensions-request-validator.html
+x-amazon-apigateway-request-validator: all

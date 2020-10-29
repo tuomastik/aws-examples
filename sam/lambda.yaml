@@ -8,8 +8,23 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 # A description of the function. (optional)
 Description: Simple hello world Lambda function
+
 # Specifies the stack resources and their properties (required)
 Resources:
+
+  # Arbitrary
+  HelloWorldApiGateway:
+    # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-api.html
+    # Creates a collection of Amazon API Gateway resources and methods that can be invoked through HTTPS endpoints.
+    Type: AWS::Serverless::Api
+    Properties:
+      # A name for the API Gateway RestApi resource (optional)
+      Name: my-awesome-api
+      # The name of the stage, which API Gateway uses as the first path segment in the invoke Uniform Resource Identifier (URI). (required)
+      StageName: Production
+      # AWS S3 Uri, local file path, or location object of the the OpenAPI document defining the API (optional)
+      DefinitionUri: ./openapi_specification.yaml
+
   # Arbitrary
   HelloWorldFunction:
     # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
@@ -17,7 +32,7 @@ Resources:
     Properties:
       # Either CodeUri or InlineCode is required.
       # The Amazon S3 URI, local file path, or FunctionCode object of the function code.
-      CodeUri: lambda-code
+      CodeUri: ./lambda-code
       # The function within your code that is called to begin execution. (required)
       Handler: my_lambda.hello_world
       # The identifier of the function's runtime. (required)
@@ -28,4 +43,18 @@ Resources:
       # Specifies the events that trigger this function. (optional)
       # Events consist of a type and a set of properties that depend on the type.
       # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-eventsource.html
-      # Events:
+      Events:
+        GetWikiSummaryApi:
+          # The event type (required)
+          # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-function-api.html
+          # The object describing an Api event source type.
+          Type: Api
+          # Object describing properties of this event mapping. (required)
+          # The set of properties must conform to the defined Type.
+          Properties:
+            # Identifier of a RestApi resource, which must contain an operation with the given path and method. (optional)
+            RestApiId: !Ref "HelloWorldApiGateway"
+            # Uri path for which this function is invoked. Must start with /. (required)
+            Path: /
+            # HTTP method for which this function is invoked. (required)
+            Method: POST
