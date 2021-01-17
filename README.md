@@ -82,6 +82,8 @@ Simple example uses of different AWS services.
        --s3-bucket my-cloudformation-templates-12345 \
        --output-template-file sam/lambda-packaged.yaml
    ```
+   
+   TODO: is this step needed anymore? https://stackoverflow.com/a/63061658/5524090
 
 5. Deploy the AWS SAM application using [`sam deploy`](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-deploy.html) command.
    

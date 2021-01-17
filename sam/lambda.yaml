@@ -30,6 +30,8 @@ Resources:
     # https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html
     Type: AWS::Serverless::Function
     Properties:
+      # A name for the function. If you don't specify a name, a unique name is generated for you. (optional)
+      FunctionName: MyHelloWorldFunction
       # Either CodeUri or InlineCode is required.
       # The Amazon S3 URI, local file path, or FunctionCode object of the function code.
       CodeUri: ./lambda-code
